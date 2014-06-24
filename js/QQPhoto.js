@@ -217,9 +217,12 @@
 			
 				//预加载上一张，下一张
 				var arrowImage = function( index ){
+					var next = index + 1,
+					    prev = index - 1;
+						
 					if ( index > 0 && index < arrLen ){
-						_this._loadImage( arr[--index].large );
-						_this._loadImage( arr[++index].large );
+						_this._loadImage( arr[next].large );
+						_this._loadImage( arr[prev].large );
 					}
 				};
 				arrowImage( index );
