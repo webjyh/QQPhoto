@@ -12,8 +12,10 @@ QQPhoto
 3.留言提交。
 4.兼容了 万恶的 IE6, 不过不建议使用
 
-如何不兼容 IE6 可以找到 QQPhoto.js 文件中 以下代码
+如何不兼容 IE6 可以找到 QQPhoto.js 文件中 以下代码<br />
+
 <code>
+
 	this.IE6 = !-[1,]&&!window.XMLHttpRequest;
 	修改成如下：
 	this.IE6 = false;
