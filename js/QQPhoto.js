@@ -34,6 +34,7 @@
 			fix : 5,
 			minTextLen : 3,
 			maxTextLen : 140,
+			fadeIn : false,
 			loadding : 'images/loading.gif'
 		},
 		
@@ -111,7 +112,7 @@
 			
 			this._loadImage( obj.large, function(){
 				DOM.photo.css( "background", "none" );
-				DOM.img.attr( 'src', obj.large ).show();
+				DOM.img.attr( 'src', obj.large )[_this.config.fadeIn === true ? "fadeIn":'show']();
 				if ( _this.IE6 ){
 					_this.image = arguments[0];
 					_this._IEImage( arguments[0] );
@@ -133,8 +134,8 @@
 		
 		//缩略图  给 li 设置事件委托
 		_creaetList: function( arr ){
-			var _this = this;
-			    DOM = this.DOM;
+			var _this = this,
+			    DOM = this.DOM,
 			    i = 0,
 			    tpl = '',
 			    arrLen = arr.length;
@@ -217,9 +218,12 @@
 			
 				//预加载上一张，下一张
 				var arrowImage = function( index ){
+					var next = index + 1,
+					    prev = index - 1;
+						
 					if ( index > 0 && index < arrLen ){
-						_this._loadImage( arr[--index].large );
-						_this._loadImage( arr[++index].large );
+						_this._loadImage( arr[next].large );
+						_this._loadImage( arr[prev].large );
 					}
 				};
 				arrowImage( index );
@@ -305,7 +309,7 @@
 		
 		//留言事件
 		_commentEvent: function(){
-			var _this = this; DOM = this.DOM;
+			var _this = this, DOM = this.DOM;
 
 			DOM.msg.bind( 'focus', function(){
 				DOM.msgInfo.removeClass('error').text('').hide();
@@ -358,6 +362,7 @@
 
 				//设置高是为了解决IE下 图片无法剧中问题
 				DOM.photo.css( 'height', ( DOM.primary.height() - 75 ) );
+				DOM.lock.css( 'height', $(document).height() );
 			
 				//卸载列表事件
 				DOM.thumbLeft.unbind();
@@ -395,8 +400,8 @@
 
 		//图片预加载
 		_loadImage: function( url, callback ){
-			var image = new Image();
-			var arr = [];
+			var image = new Image(),
+			    arr = [];
 			image.src = url;
 
 			//如果是缓存 直接调用函数
