@@ -1,0 +1,11 @@
+{
+    "status": 0,
+    "msgInfo": "成功或错误的提示信息",
+    "comment": [
+        {
+            "avatar": "http://0.gravatar.com/avatar/8a97a5bce9686c612fce48e1070a7b71?s=35&d=&r=G",
+            "user": "用户的名字",
+            "msg": "用户的留言内容"
+        }
+    ]
+}

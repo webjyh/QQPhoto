@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>QQ Photo</title>
+	<link rel="stylesheet" href="css/base.css?ver=1.0.0">
+	<link rel="stylesheet" href="css/style.css?ver=1.0.0">
+</head>
+<body>
+	<br />
+	<h1 style="text-indent:2em;">仿QQ空间相册显示功能,点击图片来测试（能力有限，不要在意细节，及一些功能）</h1>
+	<br />
+	<p style="text-indent:2em;">只是测试页面，所有数据全都重复的。留言数据也是如此，只保留当前发送的内容，关闭则全部重置。如在项目开发中，里面许多接口需要和服务端配合。</p>
+	<p style="text-indent:2em;">请使用PHP环境来测试，本页面采用PHP环境测试</p>
+	
+	<ul class="thumb-list clearfix">
+		<li><a href="javascript:void(0);"><img src="http://gitphoto.qiniudn.com/1.jpg?imageView/1/w/200/h/200" width="200" height="200" /></a></li>
+		<li><a href="javascript:void(0);"><img src="http://gitphoto.qiniudn.com/1.jpg?imageView/1/w/200/h/200" width="200" height="200" /></a></li>
+		<li><a href="javascript:void(0);"><img src="http://gitphoto.qiniudn.com/1.jpg?imageView/1/w/200/h/200" width="200" height="200" /></a></li>
+		<li><a href="javascript:void(0);"><img src="http://gitphoto.qiniudn.com/1.jpg?imageView/1/w/200/h/200" width="200" height="200" /></a></li>
+		<li><a href="javascript:void(0);"><img src="http://gitphoto.qiniudn.com/1.jpg?imageView/1/w/200/h/200" width="200" height="200" /></a></li>
+		<li><a href="javascript:void(0);"><img src="http://gitphoto.qiniudn.com/1.jpg?imageView/1/w/200/h/200" width="200" height="200" /></a></li>
+		<li><a href="javascript:void(0);"><img src="http://gitphoto.qiniudn.com/1.jpg?imageView/1/w/200/h/200" width="200" height="200" /></a></li>
+		<li><a href="javascript:void(0);"><img src="http://gitphoto.qiniudn.com/1.jpg?imageView/1/w/200/h/200" width="200" height="200" /></a></li>
+	</ul>
+	
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/QQPhoto.js?ver=1.0.0"></script>
+	<script type="text/javascript">
+		$( '.thumb-list li' ).QQPhoto({
+			url : 'data.json',                 //获取相册列表数据的URL地址 需要返回 JSON 格式，请参考文件 data.json 格式来输出
+			commentURL : 'api.php',            //提交评论 Ajax 发送到 服务器端的地址   返回 JSON 格式，请参考文件 comment.json 格式来输出 
+			fix : 5,                           //表示相册列表左右间距的距离                 默认 5 
+			minTextLen : 3,                    //发送评论时 表单验证，最少不能少于的字符    默认三个字符
+			maxTextLen : 140,                  //发送评论时 表单验证，最多不能少于的字符    默认140个字符
+			loadding : 'images/loading.gif'    //loading.gif 的文件路径
+		});
+	</script>
+</body>
+</html>
