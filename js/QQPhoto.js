@@ -232,10 +232,12 @@
 				var arrowImage = function( index ){
 					var next = index + 1,
 					    prev = index - 1;
-						
-					if ( index > 0 && index < arrLen ){
+
+					if ( index >= 0 && index < arrLen-1 ){
 						_this._loadImage( arr[next].large );
-						_this._loadImage( arr[prev].large );
+					}
+					if (index > 0 && index < arrLen-1) {
+					    _this._loadImage(arr[prev].large);
 					}
 				};
 				arrowImage( index );
@@ -449,7 +451,6 @@
 			var change = this._getChange(),
 				ML = -parseInt( index / this.thumbNum ) * change;
 			this.ulElem.stop( false, true ).animate({ 'margin-left': ML });
-			return ML;
 		},
 		
 		//IE 图片设置
