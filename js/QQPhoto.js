@@ -1,6 +1,6 @@
 /**
  * QQ.Photo 1.0.0
- * Date: 2014-05-15
+ * Date: 2014-06-15
  * (c) 2014-2014 M.J, http://webjyh.com
  *
  * This is licensed under the GNU LGPL, version 2.1 or later.
@@ -24,7 +24,7 @@
 		this.IE6 = !-[1,]&&!window.XMLHttpRequest;
 		this.image = [];
 		
-		this.elem.bind( 'click', function(){ _this.init(); } );
+		this.elem.bind('click', function (event) { event.preventDefault(); _this.init(); return false; });
 	};
 
 	QQPhoto.prototype = {
@@ -56,17 +56,28 @@
 		},
 		
 		//获取数据
-		_getJSON: function(){
-			var _this = this;
+		_getJSON: function () {
+		    var DOM = this.DOM,
+                _this = this;
 			
 			$.getJSON( _this.config.url, function( data ){
-				if ( typeof data != 'undefined' && data.msg != 0 ){
+			    if (typeof data != 'undefined' && data.code > 0) {
 					_this._data( data );
 				} else {
-					alert("\u6570\u636e\u51fa\u9519\uff0c\u8bf7\u5237\u65b0\u91cd\u8bd5");
+			        alert(data.msg);
+			        setTimeout(function (){
+			            DOM.wrap.remove();
+			            DOM.lock.remove();
+			            delete QQPhoto;
+			        }, 1500);
 				}
 			}).error( function() { 
-				alert("\u83b7\u53d6\u6570\u636e\u51fa\u9519\uff0c\u8bf7\u5237\u65b0\u91cd\u8bd5"); 
+			    alert("\u83b7\u53d6\u6570\u636e\u51fa\u9519\uff0c\u8bf7\u5237\u65b0\u91cd\u8bd5");
+			    setTimeout(function () {
+			        DOM.wrap.remove();
+			        DOM.lock.remove();
+			        delete QQPhoto;
+			    }, 1500);
 			});
 			
 			return _this;
@@ -192,6 +203,7 @@
 				this.ulElem.css({ 'width' : ulWidth, 'margin' : '0px auto' });
 				DOM.list.children( 'a' ).hide();
 			} else {
+				DOM.list.children( 'a' ).show();
 				this.ulElem.width( ulWidth );
 				this._moveX( index );
 			}
@@ -230,10 +242,10 @@
 				
 				//thumb-list current 设置
 				var arrow = function( index ){
-
 					if ( index < 0 ) _this.index = 0;
 					if ( index >= arrLen ) _this.index = ( arrLen-1 );
-					_this._setData( arr[_this.index] );
+					if (index >= 0 && index < arrLen) _this._setData(arr[_this.index]);
+
 					liElem.find('a').removeClass('current');
 					liElem.eq( _this.index ).children('a').addClass('current');
 					
@@ -318,36 +330,43 @@
 			DOM.submit.bind( 'click', function(){
 
 				//判断输入字符
-				if ( DOM.msg.val().length < _this.config.minTextLen || DOM.msg.val().length > _this.config.maxTextLen ){
-					DOM.msgInfo.addClass('error').text( '\u7559\u8a00\u5185\u5bb9\u4e0d\u5f97\u5c11\u4e8e' + _this.config.minTextLen + '\u4e2a\u5b57\u7b26\uff0c\u6700\u591a\u4e0d\u80fd\u591a\u4e8e' + _this.config.maxTextLen + '\u4e2a\u5b57\u7b26\u3002' ).show();
-				} else {
+			    if (DOM.msg.val().length < _this.config.minTextLen || DOM.msg.val().length > _this.config.maxTextLen) {
+			        DOM.msgInfo.addClass('error').text('\u7559\u8a00\u5185\u5bb9\u4e0d\u5f97\u5c11\u4e8e' + _this.config.minTextLen + '\u4e2a\u5b57\u7b26\uff0c\u6700\u591a\u4e0d\u80fd\u591a\u4e8e' + _this.config.maxTextLen + '\u4e2a\u5b57\u7b26\u3002').show();
+			    } else {
 
-					//禁用表单
-					$(document).ajaxStart(function(){
-						DOM.submit.addClass('disabled').attr( 'disabled', true );
-					});
+			        //禁用表单
+			        $(document).ajaxStart(function () {
+			            DOM.submit.addClass('disabled').attr('disabled', true);
+			        });
 
-					//Ajax 发送
-					$.getJSON( _this.config.commentURL, { pictureid: DOM.pictureid.val(), msg: DOM.msg.val() }, function( data ){
-						if ( typeof data !== 'undefined' && data.status === 0 ){
+			        //Ajax 发送
+			        $.ajax({
+			            url: _this.config.commentURL,
+			            type: "POST",
+			            dataType: "JSON",
+			            data: { pictureid: DOM.pictureid.val(), msg: DOM.msg.val() },
+			            success: function (data) {
+			                if (typeof data !== 'undefined' && data.code > 0) {
 
-							// 1.表单清空
-							// 2.设置成功信息
-							// 3.给当前图片的留言添加新数据
-							// 4.模板渲染
-							DOM.msg.val('');
-							DOM.msgInfo.removeClass('error').text( data.msgInfo ).show();
-							_this.thumbList[_this.index].comment.push( data.comment[0] );
-							_this._createComment( data.comment, 'add' );
+			                    // 1.表单清空
+			                    // 2.设置成功信息
+			                    // 3.给当前图片的留言添加新数据
+			                    // 4.模板渲染
+			                    DOM.msg.val('');
+			                    DOM.msgInfo.removeClass('error').text(data.msg).show();
+			                    _this.thumbList[_this.index].comment.push(data.comment[0]);
+			                    _this._createComment(data.comment, 'add');
 
-						} else {
-							DOM.msgInfo.addClass('error').text( dta.msgInfo ).show();
-						}
-						DOM.submit.removeClass('disabled').attr( 'disabled', false );
-					}).error(function(){
-						DOM.msgInfo.addClass('error').text('\u63d0\u4ea4\u53d1\u9001\u9519\u8bef\uff0c\u8bf7\u5237\u65b0\u540e\u91cd\u8bd5\u3002').show();
-					});
-				}
+			                } else {
+			                    DOM.msgInfo.addClass('error').text(dta.msg).show();
+			                }
+			                DOM.submit.removeClass('disabled').attr('disabled', false);
+			            },
+			            error: function () {
+			                DOM.msgInfo.addClass('error').text('\u63d0\u4ea4\u53d1\u9001\u9519\u8bef\uff0c\u8bf7\u5237\u65b0\u540e\u91cd\u8bd5\u3002').show();
+			            }
+			        });
+			    }
 
 			});
 			return _this;
@@ -430,7 +449,7 @@
 			var change = this._getChange(),
 				ML = -parseInt( index / this.thumbNum ) * change;
 			this.ulElem.stop( false, true ).animate({ 'margin-left': ML });
-			return this;
+			return ML;
 		},
 		
 		//IE 图片设置

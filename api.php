@@ -9,8 +9,8 @@ $msg = htmlspecialchars( $_GET['msg'] );
 $pictureid = htmlspecialchars( $_GET['pictureid'] );
 
 $JSON = array(
-	'status' => 0,
-	'msgInfo' => '发送成功！',
+	'code' => 1,
+	'msg' => '发送成功！',
 	'comment' => array(
 			array(
 				'avatar' => 'http://0.gravatar.com/avatar/cbbe656c7bb46772f589c9b18a7c747e?s=35&d=&r=G',
