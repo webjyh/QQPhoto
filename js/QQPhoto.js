@@ -1,5 +1,5 @@
 /**
- * QQ.Photo 1.0.0
+ * QQ.Photo 1.1.0
  * Date: 2014-06-15
  * (c) 2014-2014 M.J, http://webjyh.com
  *
@@ -35,6 +35,7 @@
 			minTextLen : 3,
 			maxTextLen : 140,
 			fadeIn : false,
+			lazyload: 'images/lazyload.gif',
 			loadding : 'images/loading.gif'
 		},
 		
@@ -86,6 +87,7 @@
 		//数据的添加
 		_data: function( JSON ){
 			var DOM = this.DOM,
+				_this = this,
 			    thumbList = JSON.thumbList,
 			    thumbLen = thumbList.length,
 			    index = this._arrayKey( JSON.showimages, thumbList );
@@ -152,7 +154,7 @@
 			    arrLen = arr.length;
 
 			for ( ; i < arrLen; i++ ){
-				tpl += QQPhoto.li.replace( '{src}', arr[i].thumb ).replace( '{index}', i );
+				tpl += QQPhoto.li.replace( '{src}', arr[i].thumb ).replace( '{index}', i ).replace( '{lazyload}', this.config.lazyload );
 			}
 			DOM.list.children('div').append( '<ul class="ui-clearfix">' + tpl +'</ul>' );
 			
@@ -208,6 +210,8 @@
 				this._moveX( index );
 			}
 			
+			this._lazyload();
+
 			//设置showimages 添加的Class
 			this.ulElem.children('li').eq( index ).children('a').addClass('current');
 
@@ -256,18 +260,25 @@
 					}
 				};
 
-				//设置上一张按钮
-				DOM.arrowLeft.bind( 'click', function(){
-					arrow( --_this.index );
+				//设置上一张，下一张操作过程
+				var action = function( index ){
+					arrow( index );
 					arrowImage( _this.index );
-				});
+					_this._lazyload();
+				};
+
+				//设置上一张按钮
+				DOM.arrowLeft.bind( 'click', function(){ action( --_this.index ); });
 				
 				//设置下一张按钮
-				DOM.arrowRight.bind( 'click', function(){
-					arrow( ++_this.index );
-					arrowImage( _this.index );
+				DOM.arrowRight.bind( 'click', function(){ action( ++_this.index ); });
+
+				//键盘响应事件
+				$(document).keydown(function( event ){
+					if ( event.which == 37 ) action( --_this.index );
+					if ( event.which == 39 ) action( ++_this.index )
 				});
-			
+
 			}
 
 			return _this;
@@ -276,6 +287,7 @@
 		//列表小箭头事件
 		_arrowThumbLeft: function(){
 			var DOM = this.DOM,
+				_this = this;
 			    change = this._getChange(),
 			    ulElem = this.ulElem;
 
@@ -292,6 +304,7 @@
 					}
 				}
 				ulElem.stop( false, true ).animate({ 'margin-left': -c });
+				_this._lazyload( c );
 			});
 
 			return this;
@@ -300,6 +313,7 @@
 		//列表小箭头事件
 		_arrowThumbRight: function(){
 			var DOM = this.DOM,
+				_this = this;
 			    change = this._getChange(),
 			    ulElem = this.ulElem,
 				ulWidth = ( this.liWidth + this.config.fix ) * this.len;
@@ -317,6 +331,7 @@
 					}
 				}
 				ulElem.stop( false, true ).animate({ 'margin-left': -c });
+				_this._lazyload( c );
 			});
 			return this;
 		},
@@ -439,6 +454,31 @@
 				if ( typeof callback !== 'undefined' ) callback.call(this, arr);
 			}
 			
+		},
+
+		_lazyload: function(){
+			var DOM = this.DOM,
+				elem = this.ulElem.find('img'),
+				ML, start, end;
+
+			if ( typeof arguments[0] !== 'undefined' ){
+				ML = arguments[0];
+			} else {
+				ML = parseInt( this.index / this.thumbNum) * this._getChange();
+			}
+
+			start = ML / ( this.liWidth + this.config.fix ),
+			end = ( start + this.thumbNum + 1 > this.len ) ? this.len : ( start + this.thumbNum + 1 );
+
+			for ( ; start<end; start++ ){
+				var src = elem.eq(start).attr('src'),
+				    data_src = elem.eq(start).attr( 'data-src' );
+				if ( src != data_src ){
+					elem[start].src = data_src;
+				}
+			}
+
+			return this;
 		},
 		
 		//返回需要偏移的值
@@ -617,7 +657,7 @@
 		'</div>';
 	
 	//列表模板
-	QQPhoto.li = '<li data-index="{index}"><a href="javascript:void(0);"><img src="{src}" width="50" height="50" /></a></li>';
+	QQPhoto.li = '<li data-index="{index}"><a href="javascript:void(0);"><img data-src="{src}" src="{lazyload}" width="50" height="50" /></a></li>';
 
 	//留言模板
 	QQPhoto.comment = 

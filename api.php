@@ -5,8 +5,8 @@ if (PHP_VERSION < '5.0.0'){
 }
 error_reporting( 2 );
 
-$msg = htmlspecialchars( $_GET['msg'] );
-$pictureid = htmlspecialchars( $_GET['pictureid'] );
+$msg = htmlspecialchars( $_POST['msg'] );
+$pictureid = htmlspecialchars( $_POST['pictureid'] );
 
 $JSON = array(
 	'code' => 1,
