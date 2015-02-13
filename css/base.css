@@ -42,15 +42,11 @@ table {
 	border-spacing: 0;
 }
 
-.thumb-list li {
-	float: left;
-	display:inline;
-	margin: 15px 0px 0px 10px;
-	padding: 10px;
-	border: 1px solid #e2e2e2;
-	background: #f8f8f8;
-	box-shadow: 0 0 3px #ccc;
-	-webkit-transition: all .3s linear;
-	   -moz-transition: all .3s linear;
-			transition: all .3s linear;
-}
+a { color: #333; }
+body { font-size: 12px; line-height: 1.6; color: #333; font-family:"Microsoft Yahei", Arial; background: #F2F2F2; }
+.title { padding: 15px; font-size: 16px; }
+.update-title { font-size: 14px; color: #666; padding: 15px; }
+.update-list { padding: 15px; line-height: 2.2; font-size: 13px; list-style-type: decimal; padding-left: 60px; }
+p { line-height: 1.8; font-size: 14px; padding-left: 15px; margin-bottom: 15px; }
+.thumb-list li { float: left; padding: 4px; border: 1px solid #DDD; background: #FFF; margin: 0px 10px; }
+.thumb-list li img { vertical-align: top; }
